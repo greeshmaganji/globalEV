@@ -35,7 +35,7 @@ const App: React.FC = () => {
                 <Zap size={20} fill="currentColor" />
             </div>
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600">
-              EV Readiness Index 2025
+              Global EV Ecosystem Readiness and GAP Analysis: 2025 Snapshot
             </h1>
           </div>
           <nav className="hidden md:flex gap-4">
@@ -106,6 +106,9 @@ const App: React.FC = () => {
         </section>
 
       </main>
+      <footer className="text-center text-sm text-gray-500 py-4 border-t mt-10">
+        © 2025 Global EV Ecosystem Readiness and GAP Analysis — Greeshma Ganji
+      </footer>
     </div>
   );
 };
