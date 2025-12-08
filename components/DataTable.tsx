@@ -1,11 +1,60 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { CountryData } from '../types';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface DataTableProps {
   data: CountryData[];
 }
 
+type SortKey = keyof CountryData | 'country_name';
+type SortDirection = 'asc' | 'desc';
+
+interface SortConfig {
+  key: SortKey;
+  direction: SortDirection;
+}
+
 const DataTable: React.FC<DataTableProps> = ({ data }) => {
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'EIRI', direction: 'desc' });
+
+  const sortedData = useMemo(() => {
+    const sorted = [...data];
+    sorted.sort((a, b) => {
+      // Handle potential missing names with fallback
+      const aValue = a[sortConfig.key as keyof CountryData] ?? '';
+      const bValue = b[sortConfig.key as keyof CountryData] ?? '';
+
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [data, sortConfig]);
+
+  const handleSort = (key: SortKey) => {
+    setSortConfig(current => ({
+      key,
+      direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc'
+    }));
+  };
+
+  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
+     if (sortConfig.key !== columnKey) return <ArrowUpDown size={14} className="ml-1 text-slate-400 opacity-50" />;
+     return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="ml-1 text-blue-600" /> : <ArrowDown size={14} className="ml-1 text-blue-600" />;
+  };
+
+  const HeaderCell = ({ label, sortKey, align = 'right' }: { label: string, sortKey: SortKey, align?: string }) => (
+      <th 
+        className={`px-6 py-3 cursor-pointer hover:bg-slate-100 transition-colors select-none group text-${align}`}
+        onClick={() => handleSort(sortKey)}
+      >
+        <div className={`flex items-center ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
+            {label}
+            <SortIcon columnKey={sortKey} />
+        </div>
+      </th>
+  );
+
   return (
     <div className="w-full bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
       <div className="p-4 border-b border-slate-100">
@@ -13,18 +62,18 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
       </div>
       <div className="overflow-x-auto custom-scrollbar">
         <table className="w-full text-sm text-left text-slate-600">
-          <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+          <thead className="text-xs text-slate-700 uppercase bg-slate-50 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3">Code</th>
-              <th className="px-6 py-3 text-right">Stations</th>
-              <th className="px-6 py-3 text-right">Readiness (EIRI)</th>
-              <th className="px-6 py-3 text-right">Model Availability</th>
-              <th className="px-6 py-3 text-right">Gap</th>
-              <th className="px-6 py-3 text-right">Median Power (kW)</th>
+              <HeaderCell label="Code" sortKey="country_name" align="left" />
+              <HeaderCell label="Stations" sortKey="stations" />
+              <HeaderCell label="Readiness (EIRI)" sortKey="EIRI" />
+              <HeaderCell label="Model Availability" sortKey="availability_norm" />
+              <HeaderCell label="Gap" sortKey="gap_value" />
+              <HeaderCell label="Median Power (kW)" sortKey="median_power_kw" />
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => (
+            {sortedData.map((row, index) => (
               <tr key={row.country_code} className={`border-b border-slate-100 hover:bg-slate-50 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
                 <td className="px-6 py-4 font-medium text-slate-900">{row.country_name || row.country_code}</td>
                 <td className="px-6 py-4 text-right">{row.stations.toLocaleString()}</td>

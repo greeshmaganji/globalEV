@@ -26,7 +26,7 @@ const App: React.FC = () => {
   }, [data]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-12">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -35,7 +35,7 @@ const App: React.FC = () => {
                 <Zap size={20} fill="currentColor" />
             </div>
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600">
-              Global EV Ecosystem Readiness and GAP Analysis - 2025
+              Global EV Ecosystem Readiness and GAP Analysis 2025
             </h1>
           </div>
           <nav className="hidden md:flex gap-4">
@@ -46,7 +46,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 flex-grow">
         
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -106,8 +106,11 @@ const App: React.FC = () => {
         </section>
 
       </main>
-      <footer className="text-center text-sm text-gray-500 py-4 border-t mt-10">
-        © 2025 Global EV Ecosystem Readiness and GAP Analysis — Greeshma Ganji
+
+      <footer className="bg-white border-t border-slate-200 py-6">
+        <div className="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+          &copy; 2025 Greeshma Ganji. All rights reserved.
+        </div>
       </footer>
     </div>
   );

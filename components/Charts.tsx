@@ -30,7 +30,13 @@ export const TopReadinessChart: React.FC<ChartProps> = ({ data }) => {
           <BarChart data={sortedData} layout="vertical" margin={{ top: 0, right: 30, left: 10, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
             <XAxis type="number" domain={[0, 100]} hide />
-            <YAxis dataKey="country_code" type="category" width={40} tick={{ fontSize: 13, fontWeight: 500 }} />
+            <YAxis 
+                dataKey="country_name" 
+                type="category" 
+                width={140} 
+                tick={{ fontSize: 11, fontWeight: 500, fill: '#475569' }}
+                interval={0}
+            />
             <Tooltip 
               cursor={{ fill: '#f1f5f9' }}
               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
