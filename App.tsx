@@ -35,7 +35,7 @@ const App: React.FC = () => {
                 <Zap size={20} fill="currentColor" />
             </div>
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600">
-              Global EV Ecosystem Readiness and GAP Analysis: 2025 Snapshot
+              Global EV Ecosystem Readiness and GAP Analysis - 2025
             </h1>
           </div>
           <nav className="hidden md:flex gap-4">

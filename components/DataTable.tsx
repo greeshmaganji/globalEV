@@ -1,90 +1,50 @@
-import React, { useState } from "react";
-import { CountryData } from "../types";
-import { ArrowUpDown } from "lucide-react";
+import React from 'react';
+import { CountryData } from '../types';
 
-interface Props {
+interface DataTableProps {
   data: CountryData[];
 }
 
-type SortKey = keyof CountryData;
-type SortOrder = "asc" | "desc";
-
-const DataTable: React.FC<Props> = ({ data }) => {
-  const [sortKey, setSortKey] = useState<SortKey>("country_code");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const sorted = [...data].sort((a, b) => {
-    const valA = a[sortKey] ?? 0;
-    const valB = b[sortKey] ?? 0;
-
-    if (typeof valA === "string") {
-      return sortOrder === "asc"
-        ? valA.localeCompare(valB as string)
-        : valB.localeCompare(valA as string);
-    }
-
-    return sortOrder === "asc" ? valA - (valB as number) : (valB as number) - valA;
-  });
-
-  const renderSortIcon = (key: SortKey) => (
-    <ArrowUpDown
-      size={14}
-      className={`ml-2 inline ${
-        sortKey === key ? "text-blue-600" : "text-slate-400"
-      }`}
-    />
-  );
-
+const DataTable: React.FC<DataTableProps> = ({ data }) => {
   return (
-    <div className="overflow-x-auto rounded-xl bg-white border border-slate-200 shadow-sm">
-      <table className="w-full text-sm text-left">
-        <thead className="bg-slate-50 text-slate-600 uppercase text-xs">
-          <tr>
-            <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("country_code")}>
-              CODE {renderSortIcon("country_code")}
-            </th>
-            <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("stations")}>
-              Stations {renderSortIcon("stations")}
-            </th>
-            <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("EIRI")}>
-              Readiness (EIRI) {renderSortIcon("EIRI")}
-            </th>
-            <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("model_availability")}>
-              Model Availability {renderSortIcon("model_availability")}
-            </th>
-            <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("gap_value")}>
-              Gap {renderSortIcon("gap_value")}
-            </th>
-            <th className="px-4 py-3 cursor-pointer" onClick={() => handleSort("median_power")}>
-              Median Power (kW) {renderSortIcon("median_power")}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((row) => (
-            <tr key={row.country_code} className="border-t hover:bg-blue-50/40 transition">
-              <td className="px-4 py-3">{row.country_code}</td>
-              <td className="px-4 py-3">{row.stations.toLocaleString()}</td>
-              <td className="px-4 py-3">{row.EIRI.toFixed(1)}</td>
-              <td className="px-4 py-3">{row.model_availability.toFixed(1)}</td>
-              <td className={`px-4 py-3 font-medium ${row.gap_value > 0 ? "text-blue-600" : "text-red-500"}`}>
-                {row.gap_value > 0 ? "+" : ""}
-                {row.gap_value.toFixed(1)}
-              </td>
-              <td className="px-4 py-3">{row.median_power}</td>
+    <div className="w-full bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+      <div className="p-4 border-b border-slate-100">
+        <h3 className="font-semibold text-slate-800">Detailed Country Metrics</h3>
+      </div>
+      <div className="overflow-x-auto custom-scrollbar">
+        <table className="w-full text-sm text-left text-slate-600">
+          <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+            <tr>
+              <th className="px-6 py-3">Code</th>
+              <th className="px-6 py-3 text-right">Stations</th>
+              <th className="px-6 py-3 text-right">Readiness (EIRI)</th>
+              <th className="px-6 py-3 text-right">Model Availability</th>
+              <th className="px-6 py-3 text-right">Gap</th>
+              <th className="px-6 py-3 text-right">Median Power (kW)</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((row, index) => (
+              <tr key={row.country_code} className={`border-b border-slate-100 hover:bg-slate-50 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
+                <td className="px-6 py-4 font-medium text-slate-900">{row.country_name || row.country_code}</td>
+                <td className="px-6 py-4 text-right">{row.stations.toLocaleString()}</td>
+                <td className="px-6 py-4 text-right">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${row.EIRI > 60 ? 'bg-green-100 text-green-700' : row.EIRI > 30 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
+                        {row.EIRI.toFixed(1)}
+                    </span>
+                </td>
+                <td className="px-6 py-4 text-right">{row.availability_norm.toFixed(1)}</td>
+                <td className="px-6 py-4 text-right font-mono">
+                    <span className={row.gap_value > 0 ? 'text-blue-600' : 'text-orange-600'}>
+                        {row.gap_value > 0 ? '+' : ''}{row.gap_value.toFixed(1)}
+                    </span>
+                </td>
+                <td className="px-6 py-4 text-right">{row.median_power_kw}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
